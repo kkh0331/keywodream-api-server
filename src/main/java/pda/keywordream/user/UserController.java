@@ -3,11 +3,9 @@ package pda.keywordream.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pda.keywordream.user.dto.NicknameReqDto;
+import pda.keywordream.user.dto.NicknameResDto;
 import pda.keywordream.user.entity.User;
 import pda.keywordream.user.service.UserService;
 import pda.keywordream.utils.ApiUtils;
@@ -27,6 +25,13 @@ public class UserController {
         return ResponseEntity.ok()
                 .header("accessToken", userToken)
                 .body(ApiUtils.success("로그인 성공"));
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<ApiResult<NicknameResDto>> getNickname(@RequestHeader("accessToken") String token){
+        User user = userService.getUser(token);
+        NicknameResDto nicknameResDto = NicknameResDto.builder().nickname(user.getNickname()).build();
+        return ResponseEntity.ok(ApiUtils.success(nicknameResDto));
     }
 
 }
