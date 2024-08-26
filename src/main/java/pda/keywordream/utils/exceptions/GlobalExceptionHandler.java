@@ -2,8 +2,10 @@ package pda.keywordream.utils.exceptions;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -108,6 +110,16 @@ public class GlobalExceptionHandler {
     public ApiResult handleMissingRequestHeaderException(MissingRequestHeaderException e){
         log.error("MissingRequestHeaderException = {}", e.getMessage());
         return ApiUtils.error(e.getHeaderName()+" is required", HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    * 서버에서 처리하지 못한 예기치 않은 오류가 발생할 경우
+    * */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiResult handleRuntimeException(RuntimeException e){
+        log.error("RuntimeException = {}", e.getMessage());
+        return ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
