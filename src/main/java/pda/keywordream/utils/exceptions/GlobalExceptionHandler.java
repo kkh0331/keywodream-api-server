@@ -1,14 +1,18 @@
 package pda.keywordream.utils.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import pda.keywordream.utils.ApiUtils;
 import pda.keywordream.utils.ApiUtils.ApiResult;
 
@@ -74,6 +78,36 @@ public class GlobalExceptionHandler {
         log.error("MissingServletRequestParameterException = {}", e.getMessage());
         String name = e.getParameterName();
         return ApiUtils.error(name + " is required", HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+     * Token 만료
+     * */
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResult handleExpiredJwtException(ExpiredJwtException e){
+        log.error("ExpiredJwtException = {}", e.getMessage());
+        return ApiUtils.error("Token has expired", HttpStatus.UNAUTHORIZED);
+    }
+
+    /*
+     * 잘못된 Token일 경우
+     * */
+    @ExceptionHandler(SignatureException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResult handleSignatureException(SignatureException e){
+        log.error("JwtTokenExpiredException = {}", e.getMessage());
+        return ApiUtils.error("Invalidated JWT", HttpStatus.UNAUTHORIZED);
+    }
+
+    /*
+    * request header 넘겨주지 않았을 경우
+    * */
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult handleMissingRequestHeaderException(MissingRequestHeaderException e){
+        log.error("MissingRequestHeaderException = {}", e.getMessage());
+        return ApiUtils.error(e.getHeaderName()+" is required", HttpStatus.BAD_REQUEST);
     }
 
 }
