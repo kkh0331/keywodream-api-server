@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pda.keywordream.rank.client.RankClient;
 import pda.keywordream.rank.dto.RankKeywordResDto;
+import pda.keywordream.rank.dto.RankKeywordStockResDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
 import pda.keywordream.rank.dto.api.RankKeywordApi;
+import pda.keywordream.rank.dto.api.RankKeywordStock;
 
 import java.util.List;
 
@@ -30,8 +32,14 @@ public class RankService {
     public List<RankKeywordResDto> getRankKeywords() {
         RankKeywordApi rankKeywordApi = rankClient.fetchRankKeywords();
         return rankKeywordApi.getList().stream().map(rankKeyword -> RankKeywordResDto.builder()
-                .id(rankKeyword.getIssn())
+                .issn(rankKeyword.getIssn())
                 .keyword(rankKeyword.getKeyword())
                 .build()).toList();
+    }
+
+    // thinkpool에서 발급받은 issn으로 관련 주식들 가져옴
+    public List<RankKeywordStockResDto> getRankKeywordStocks(Long issn) {
+        List<RankKeywordStock> rankKeywordStocks = rankClient.fetchRankKeywordStocks(issn);
+        return rankKeywordStocks.stream().map(RankKeywordStock::toRankKeywordStockResDto).toList();
     }
 }
