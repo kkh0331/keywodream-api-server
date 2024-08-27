@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.RankSearchReqDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
 import pda.keywordream.rank.service.RankService;
@@ -24,6 +25,12 @@ public class RankController {
     public ResponseEntity<ApiResult<List<RankSearchResDto>>> getRankSearches(@Valid @ModelAttribute RankSearchReqDto reqDto){
         List<RankSearchResDto> rankSearchResDtos = rankService.getRankSearches(reqDto.getLimit());
         return ResponseEntity.ok(ApiUtils.success(rankSearchResDtos));
+    }
+
+    @GetMapping("/keywords")
+    public ResponseEntity<ApiResult<List<RankKeywordResDto>>> getRankKeywords(){
+        List<RankKeywordResDto> rankKeywordResDtos = rankService.getRankKeywords();
+        return ResponseEntity.ok(ApiUtils.success(rankKeywordResDtos));
     }
 
 }

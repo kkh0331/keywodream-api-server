@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pda.keywordream.rank.client.RankClient;
+import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
+import pda.keywordream.rank.dto.api.RankKeywordApi;
 
 import java.util.List;
 
@@ -22,5 +24,14 @@ public class RankService {
         if(limit == null)
             return rankSearchResDtos;
         return rankSearchResDtos.stream().limit(limit).toList();
+    }
+
+    // thinkpool라는 사이트에서 키워드 가져옴
+    public List<RankKeywordResDto> getRankKeywords() {
+        RankKeywordApi rankKeywordApi = rankClient.fetchRankKeywords();
+        return rankKeywordApi.getList().stream().map(rankKeyword -> RankKeywordResDto.builder()
+                .id(rankKeyword.getIssn())
+                .keyword(rankKeyword.getKeyword())
+                .build()).toList();
     }
 }

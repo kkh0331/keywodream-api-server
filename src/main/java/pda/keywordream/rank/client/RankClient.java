@@ -1,10 +1,13 @@
 package pda.keywordream.rank.client;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
+import pda.keywordream.rank.dto.api.RankKeywordApi;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,6 +50,20 @@ public class RankClient {
                 .newsUrl(newsUrl)
                 .imgUrl(imgUrl)
                 .build();
+    }
+
+    public RankKeywordApi fetchRankKeywords(){
+        try{
+            WebClient webClient = WebClient.create();
+            String thinkpoolUrl = "https://api.thinkpool.com/socialAnalysis/keyword";
+            return webClient.get()
+                    .uri(thinkpoolUrl)
+                    .retrieve()
+                    .bodyToMono(RankKeywordApi.class)
+                    .block();
+        } catch(Exception e){
+            throw new RuntimeException("thickpool에서 키워드 리스트 가져오기 실패");
+        }
     }
 
 }
