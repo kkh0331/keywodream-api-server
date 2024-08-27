@@ -2,13 +2,14 @@ package pda.keywordream.rank;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.RankKeywordStockResDto;
 import pda.keywordream.rank.dto.RankSearchReqDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
-import pda.keywordream.rank.dto.api.RankKeywordStock;
+import pda.keywordream.rank.dto.api.RankStock;
 import pda.keywordream.rank.service.RankService;
 import pda.keywordream.utils.ApiUtils;
 import pda.keywordream.utils.ApiUtils.ApiResult;
@@ -41,5 +42,13 @@ public class RankController {
         List<RankKeywordStockResDto> rankKeywordStockResDtos = rankService.getRankKeywordStocks(issn);
         return ResponseEntity.ok(ApiUtils.success(rankKeywordStockResDtos));
     }
+
+    @GetMapping("/stocks/volume")
+    public ResponseEntity<ApiResult<List<RankStock>>> getRankStockVolume(){
+        List<RankStock> rankStocks = rankService.getRankStockVolume();
+        return ResponseEntity.ok(ApiUtils.success(rankStocks));
+    }
+
+
 
 }

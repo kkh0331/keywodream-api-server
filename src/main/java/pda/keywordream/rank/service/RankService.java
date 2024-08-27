@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pda.keywordream.rank.client.GoogleTrendClient;
+import pda.keywordream.rank.client.ShinhanSecClient;
 import pda.keywordream.rank.client.ThinkpoolClient;
 import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.RankKeywordStockResDto;
 import pda.keywordream.rank.dto.RankSearchResDto;
 import pda.keywordream.rank.dto.api.RankKeywordApi;
 import pda.keywordream.rank.dto.api.RankKeywordStock;
+import pda.keywordream.rank.dto.api.RankStock;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class RankService {
 
     private final GoogleTrendClient googleTrendClient;
     private final ThinkpoolClient thinkpoolClient;
+    private final ShinhanSecClient shinhanSecClient;
 
     // Google Trend 실시간 검색어에 관한 정보를 가져옴
     public List<RankSearchResDto> getRankSearches(Integer limit) {
@@ -43,5 +46,10 @@ public class RankService {
     public List<RankKeywordStockResDto> getRankKeywordStocks(Long issn) {
         List<RankKeywordStock> rankKeywordStocks = thinkpoolClient.fetchRankKeywordStocks(issn);
         return rankKeywordStocks.stream().map(RankKeywordStock::toRankKeywordStockResDto).toList();
+    }
+
+    public List<RankStock> getRankStockVolume() {
+        //TODO User 정보 받아서 찜 여부 체크
+        return shinhanSecClient.getRankStocks();
     }
 }
