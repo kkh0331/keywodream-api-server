@@ -2,6 +2,7 @@ package pda.keywordream.heart.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pda.keywordream.heart.dto.HeartStockResDto;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
@@ -11,7 +12,9 @@ import pda.keywordream.utils.exceptions.NoSaveElementException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class HeartStockService {
@@ -44,5 +47,18 @@ public class HeartStockService {
                 })
                 .filter(heartStockResDto -> heartStockResDto.getStock() != null)
                 .toList();
+    }
+
+    public void deleteHeartStock(Long userId, String stockCode) {
+        HeartStock heartStock = heartStockRepository.findByUserIdAndStockCode(userId, stockCode)
+                .orElseThrow(() -> new NoSuchElementException("찜 목록에 해당 주식이 없습니다."));
+        heartStockRepository.deleteById(heartStock.getId());
+    }
+
+    public void checkHeartStock(Long userId, String stockCode) {
+        Optional<HeartStock> hearStock =  heartStockRepository.findByUserIdAndStockCode(userId, stockCode);
+        if(hearStock.isPresent()){
+            throw new RuntimeException("찜 목록에서 해당 주식 취소가 실패했습니다.");
+        }
     }
 }

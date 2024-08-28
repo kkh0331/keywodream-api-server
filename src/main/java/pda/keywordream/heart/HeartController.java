@@ -41,4 +41,15 @@ public class HeartController {
         return ResponseEntity.ok(ApiUtils.success(heartStockResDtos));
     }
 
+    @DeleteMapping("/stocks/{stockCode}")
+    public ResponseEntity<ApiResult<String>> deleteHeartStock(
+            @RequestHeader("accessToken") String token,
+            @PathVariable String stockCode
+    ){
+        User user = userService.getUser(token);
+        heartStockService.deleteHeartStock(user.getId(), stockCode);
+        heartStockService.checkHeartStock(user.getId(), stockCode);
+        return ResponseEntity.ok(ApiUtils.success("찜 기능에서 삭제 완료"));
+    }
+
 }
