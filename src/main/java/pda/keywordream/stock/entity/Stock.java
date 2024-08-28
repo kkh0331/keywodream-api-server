@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import pda.keywordream.stock.dto.StockResDto;
 
 @Entity
 @Builder
@@ -24,5 +25,12 @@ public class Stock {
 
     @Column(length = 1)
     private String market;
+
+    public StockResDto toStockResDto(){
+        return StockResDto.builder()
+                .code(code)
+                .name(name)
+                .build();
+    }
 
 }
