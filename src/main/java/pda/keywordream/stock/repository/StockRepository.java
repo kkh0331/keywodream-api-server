@@ -5,10 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import pda.keywordream.stock.entity.Stock;
 
+import java.util.Optional;
+
 public interface StockRepository extends JpaRepository<Stock, String> {
 
     Page<Stock> findAllByCodeContaining(String code, Pageable pageable);
     Page<Stock> findAllByNameContaining(String name, Pageable pageable);
     Page<Stock> findAll(Pageable pageable);
+    Optional<Stock> findByCode(String code);
 
 }

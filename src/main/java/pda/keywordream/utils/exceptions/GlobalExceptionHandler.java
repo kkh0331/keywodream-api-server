@@ -122,4 +122,14 @@ public class GlobalExceptionHandler {
         return ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /*
+     * 저장 실패할 경우
+     * */
+    @ExceptionHandler(NoSaveElementException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult handleNoSaveElementException(NoSaveElementException e){
+        log.error("NoSaveElementException = {}", e.getMessage());
+        return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
