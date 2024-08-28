@@ -2,11 +2,14 @@ package pda.keywordream.heart.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pda.keywordream.heart.dto.HeartStockResDto;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
+import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
 import pda.keywordream.utils.exceptions.NoSaveElementException;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -27,5 +30,19 @@ public class HeartStockService {
         if(savedHeartStock.getId() == null){
             throw new NoSaveElementException("찜 목록 추가에 실패했습니다.");
         }
+    }
+
+    public List<HeartStockResDto> getHearStocks(Long userId) {
+        List<HeartStock> heartStocks = heartStockRepository.findAllByUserId(userId);
+        return heartStocks.stream()
+                .map(heartStock -> {
+                    Stock stock = stockRepository.findByCode(heartStock.getStockCode()).orElse(null);
+                    return HeartStockResDto.builder()
+                            .id(heartStock.getId())
+                            .stock(stock)
+                            .build();
+                })
+                .filter(heartStockResDto -> heartStockResDto.getStock() != null)
+                .toList();
     }
 }
