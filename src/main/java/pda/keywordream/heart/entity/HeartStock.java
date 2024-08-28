@@ -9,7 +9,10 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-@Table(name = "hearted_stocks")
+@Table(name = "hearted_stocks", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"userId", "stockCode"})
+})
+
 public class HeartStock {
 
     @Id

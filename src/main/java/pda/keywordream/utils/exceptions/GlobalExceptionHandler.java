@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
 import pda.keywordream.utils.ApiUtils;
 import pda.keywordream.utils.ApiUtils.ApiResult;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -115,12 +116,12 @@ public class GlobalExceptionHandler {
     /*
     * 서버에서 처리하지 못한 예기치 않은 오류가 발생할 경우
     * */
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResult handleRuntimeException(RuntimeException e){
-        log.error("RuntimeException = {}", e.getMessage());
-        return ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ApiResult handleRuntimeException(RuntimeException e){
+//        log.error("RuntimeException = {}", e.getMessage());
+//        return ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     /*
      * 저장 실패할 경우
@@ -129,6 +130,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResult handleNoSaveElementException(NoSaveElementException e){
         log.error("NoSaveElementException = {}", e.getMessage());
+        return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    * SQL 제약조건 위반
+    * */
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
+        log.error("SQLIntegrityConstraintViolationException = {}", e.getMessage());
         return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
