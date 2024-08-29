@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pda.keywordream.heart.entity.HeartStock;
+import pda.keywordream.heart.repository.HeartStockRepository;
 import pda.keywordream.stock.client.KoInvSecClient;
 import pda.keywordream.stock.dto.*;
 import pda.keywordream.stock.dto.api.StockPriceApi;
@@ -20,9 +22,11 @@ import java.util.NoSuchElementException;
 public class StockService {
 
     private final StockRepository stockRepository;
+    private final HeartStockRepository heartStockRepository;
+
     private final KoInvSecClient koInvSecClient;
 
-    public GetStocksResDto getStocks(GetStocksReqDto reqDto) {
+    public GetStocksResDto getStocks(GetStocksReqDto reqDto, Long userId) {
         Page<Stock> page = getStocksByCondition(reqDto);
         if(page.isEmpty()){
             throw new NoSuchElementException("해당 조건에 맞는 Stocks이 서버에 없습니다.");
@@ -31,7 +35,15 @@ public class StockService {
                 .currentPage(reqDto.getPage())
                 .totalCount(page.getTotalElements())
                 .build();
-        List<StockResDto> stocks = page.stream().map(Stock::toStockResDto).toList();
+        List<String> heartedStockCodes = heartStockRepository.findAllByUserId(userId).stream()
+                .map(HeartStock::getStockCode).toList();
+        List<StockResDto> stocks = page.stream()
+                .map(stock -> StockResDto.builder()
+                        .code(stock.getCode())
+                        .name(stock.getName())
+                        .isHearted(heartedStockCodes.contains(stock.getCode()))
+                        .build())
+                .toList();
         return GetStocksResDto.builder()
                 .pageNation(pageNation)
                 .stocks(stocks)

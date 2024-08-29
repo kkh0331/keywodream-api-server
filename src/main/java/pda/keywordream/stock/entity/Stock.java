@@ -26,11 +26,4 @@ public class Stock {
     @Column(length = 1)
     private String market;
 
-    public StockResDto toStockResDto(){
-        return StockResDto.builder()
-                .code(code)
-                .name(name)
-                .build();
-    }
-
 }

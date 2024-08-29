@@ -9,5 +9,6 @@ public class StockResDto {
 
     private String code;
     private String name;
+    private Boolean isHearted;
 
 }
