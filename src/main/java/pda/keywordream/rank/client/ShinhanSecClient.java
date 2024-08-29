@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import pda.keywordream.rank.dto.api.RankStock;
 import pda.keywordream.rank.dto.api.RankStockApi;
+import pda.keywordream.rank.dto.api.RankStockByViewsApi;
 
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class ShinhanSecClient {
 
     @Getter
     private List<RankStock> rankStocksByRising;
+
+    @Getter
+    private List<RankStock> rankStocksByViews;
 
     // 신한투자증권 Open API로 거래량 순으로 상위 5개 가져온다.
     public void fetchRankStockVolume(){
@@ -58,5 +62,19 @@ public class ShinhanSecClient {
             throw new RuntimeException("신한투자증권에서 주가상승률 순으로 종목 가져오기 실패");
         }
     }
-    
+
+    // 신한투자증권 Open API로 조회수 순으로 상위 5개 가져온다.
+    public void fetchRankStockViews(){
+        try{
+            RankStockByViewsApi rankStockRising = webClient.get()
+                    .uri(uriBuilder -> uriBuilder.path("/rising").build())
+                    .retrieve()
+                    .bodyToMono(RankStockByViewsApi.class)
+                    .block();
+            rankStocksByViews = rankStockRising.getDataBody().getList();
+        } catch(Exception e){
+            log.error(e.getMessage());
+            throw new RuntimeException("신한투자증권에서 조회수 순으로 종목 가져오기 실패");
+        }
+    }
 }

@@ -25,6 +25,7 @@ public class SchedulerConfig {
     public void runShinhanSecClient(){
         shinhanSecClient.fetchRankStockVolume();
         shinhanSecClient.fetchRankStockRising();
+        shinhanSecClient.fetchRankStockViews();
         log.info("신한투자증권 Open API - 실시간 인기 종목 업데이트");
     }
 

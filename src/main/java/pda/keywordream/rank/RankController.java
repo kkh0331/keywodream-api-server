@@ -60,6 +60,15 @@ public class RankController {
         return ResponseEntity.ok(ApiUtils.success(rankStocks));
     }
 
+    @GetMapping("/stocks/views")
+    public ResponseEntity<ApiResult<List<RankStockResDto>>> getRankStockByViews(
+            @RequestHeader("accessToken") String token
+    ){
+        User user = userService.getUser(token);
+        List<RankStockResDto> rankStocks = rankService.getRankStocks(user.getId(), Sorting.VIEWS);
+        return ResponseEntity.ok(ApiUtils.success(rankStocks));
+    }
+
 
 
 }

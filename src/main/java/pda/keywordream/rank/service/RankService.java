@@ -78,7 +78,7 @@ public class RankService {
     public List<RankStock> getRankStocksBySorting(Sorting sorting){
         return switch (sorting){
             case VOLUME -> shinhanSecClient.getRankStocksByVolume();
-            case VIEWS -> shinhanSecClient.getRankStocksByVolume();
+            case VIEWS -> shinhanSecClient.getRankStocksByViews();
             case RISING -> shinhanSecClient.getRankStocksByRising();
         };
     }
