@@ -10,10 +10,14 @@ import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
 import pda.keywordream.stock.client.KoInvSecClient;
 import pda.keywordream.stock.dto.*;
+import pda.keywordream.stock.dto.api.StockDailyPrice;
+import pda.keywordream.stock.dto.api.StockDailyPriceApi;
 import pda.keywordream.stock.dto.api.StockPriceApi;
 import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -74,5 +78,13 @@ public class StockService {
                 .price(stockPriceApi.getOutput().getPrice())
                 .ratio(stockPriceApi.getOutput().getRatio())
                 .build();
+    }
+
+    public List<StockDailyPriceResDto> getStockDailyPrices(String stockCode, Date startDate, Date endDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        StockDailyPriceApi stockDailyPriceApi = koInvSecClient.fetchStockDailyPrice(stockCode, sdf.format(startDate), sdf.format(endDate));
+        return stockDailyPriceApi.getOutput2().stream()
+                .map(StockDailyPrice::toStockDailyPriceResDto)
+                .toList();
     }
 }

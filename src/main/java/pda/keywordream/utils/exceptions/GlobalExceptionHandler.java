@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import pda.keywordream.utils.ApiUtils;
 import pda.keywordream.utils.ApiUtils.ApiResult;
@@ -140,6 +141,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResult handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
         log.error("SQLIntegrityConstraintViolationException = {}", e.getMessage());
+        return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    * Method type Mismatch인 경우
+    * */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        log.error("MethodArgumentTypeMismatchException = {}", e.getMessage());
         return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
