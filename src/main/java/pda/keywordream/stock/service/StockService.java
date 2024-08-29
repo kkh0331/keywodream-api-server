@@ -1,25 +1,26 @@
 package pda.keywordream.stock.service;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pda.keywordream.stock.dto.GetStocksReqDto;
-import pda.keywordream.stock.dto.GetStocksResDto;
-import pda.keywordream.stock.dto.PageNation;
-import pda.keywordream.stock.dto.StockResDto;
+import pda.keywordream.stock.client.KoInvSecClient;
+import pda.keywordream.stock.dto.*;
+import pda.keywordream.stock.dto.api.StockPriceApi;
 import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
 public class StockService {
 
     private final StockRepository stockRepository;
+    private final KoInvSecClient koInvSecClient;
 
     public GetStocksResDto getStocks(GetStocksReqDto reqDto) {
         Page<Stock> page = getStocksByCondition(reqDto);
@@ -49,5 +50,17 @@ public class StockService {
             return stockRepository.findAllByNameContaining(name, pageable);
         }
         return stockRepository.findAll(pageable);
+    }
+
+    public GetStockResDto getStock(String stockCode) {
+        Stock stock = stockRepository.findByCode(stockCode)
+                .orElseThrow(() -> new NoSuchElementException("해당 주식이 존재하지 않습니다."));
+        StockPriceApi stockPriceApi = koInvSecClient.fetchStockPrice(stockCode);
+        return GetStockResDto.builder()
+                .code(stockCode)
+                .name(stock.getName())
+                .price(stockPriceApi.getOutput().getPrice())
+                .ratio(stockPriceApi.getOutput().getRatio())
+                .build();
     }
 }

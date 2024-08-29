@@ -1,12 +1,11 @@
 package pda.keywordream.stock;
 
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pda.keywordream.stock.dto.GetStockResDto;
 import pda.keywordream.stock.dto.GetStocksReqDto;
 import pda.keywordream.stock.dto.GetStocksResDto;
 import pda.keywordream.stock.service.StockService;
@@ -31,5 +30,14 @@ public class StockController {
         GetStocksResDto getStocksResDto = stockService.getStocks(reqDto);
         return ResponseEntity.ok(ApiUtils.success(getStocksResDto));
     }
+
+    @GetMapping("/{stockCode}")
+    public ResponseEntity<ApiResult<GetStockResDto>> getStock(
+            @PathVariable String stockCode
+    ){
+        GetStockResDto getStockResDto = stockService.getStock(stockCode);
+        return ResponseEntity.ok(ApiUtils.success(getStockResDto));
+    }
+
 
 }
