@@ -15,6 +15,7 @@ import pda.keywordream.rank.dto.RankStockResDto;
 import pda.keywordream.rank.dto.api.RankKeywordApi;
 import pda.keywordream.rank.dto.api.RankKeywordStock;
 import pda.keywordream.rank.dto.api.RankStock;
+import pda.keywordream.rank.type.Sorting;
 import pda.keywordream.stock.client.KoInvSecClient;
 import pda.keywordream.stock.dto.api.StockPrice;
 import pda.keywordream.stock.dto.api.StockPriceApi;
@@ -57,15 +58,14 @@ public class RankService {
         return rankKeywordStocks.stream().map(RankKeywordStock::toRankKeywordStockResDto).toList();
     }
 
-    public List<RankStockResDto> getRankStockVolume(Long userId) {
+    public List<RankStockResDto> getRankStocks(Long userId, Sorting sorting) {
         List<String> heartedStockCodes = heartStockRepository.findAllByUserId(userId).stream()
                 .map(HeartStock::getStockCode).toList();
-        List<RankStock> rankStocks = shinhanSecClient.getRankStocks();
+        List<RankStock> rankStocks = getRankStocksBySorting(sorting);
         return rankStocks.stream().map(rankStock -> {
             StockPriceApi stockPriceApi = koInvSecClient.fetchStockPrice(rankStock.getCode());
             StockPrice stockPrice = stockPriceApi.getOutput();
             return RankStockResDto.builder()
-                    .rank(rankStock.getRank())
                     .code(rankStock.getCode())
                     .name(rankStock.getName())
                     .price(stockPrice.getPrice())
@@ -73,5 +73,13 @@ public class RankService {
                     .isHearted(heartedStockCodes.contains(rankStock.getCode()))
                     .build();
         }).toList();
+    }
+
+    public List<RankStock> getRankStocksBySorting(Sorting sorting){
+        return switch (sorting){
+            case VOLUME -> shinhanSecClient.getRankStocksByVolume();
+            case VIEWS -> shinhanSecClient.getRankStocksByVolume();
+            case RISING -> shinhanSecClient.getRankStocksByRising();
+        };
     }
 }

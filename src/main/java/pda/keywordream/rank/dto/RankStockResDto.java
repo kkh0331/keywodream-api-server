@@ -8,7 +8,6 @@ import lombok.Getter;
 @Builder
 public class RankStockResDto {
 
-    private Long rank;
     private String name;
     private String code;
     private String price;

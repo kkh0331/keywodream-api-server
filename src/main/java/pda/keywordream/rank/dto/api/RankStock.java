@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class RankStock {
-    private Long rank;
 
     @JsonProperty("stbd_nm")
     private String name;

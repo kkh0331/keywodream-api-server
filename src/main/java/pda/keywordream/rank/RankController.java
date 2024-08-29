@@ -2,12 +2,11 @@ package pda.keywordream.rank;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pda.keywordream.rank.dto.*;
-import pda.keywordream.rank.dto.api.RankStock;
 import pda.keywordream.rank.service.RankService;
+import pda.keywordream.rank.type.Sorting;
 import pda.keywordream.user.entity.User;
 import pda.keywordream.user.service.UserService;
 import pda.keywordream.utils.ApiUtils;
@@ -44,11 +43,20 @@ public class RankController {
     }
 
     @GetMapping("/stocks/volume")
-    public ResponseEntity<ApiResult<List<RankStockResDto>>> getRankStockVolume(
+    public ResponseEntity<ApiResult<List<RankStockResDto>>> getRankStockByVolume(
             @RequestHeader("accessToken") String token
     ){
         User user = userService.getUser(token);
-        List<RankStockResDto> rankStocks = rankService.getRankStockVolume(user.getId());
+        List<RankStockResDto> rankStocks = rankService.getRankStocks(user.getId(), Sorting.VOLUME);
+        return ResponseEntity.ok(ApiUtils.success(rankStocks));
+    }
+
+    @GetMapping("/stocks/rising")
+    public ResponseEntity<ApiResult<List<RankStockResDto>>> getRankStockByRising(
+            @RequestHeader("accessToken") String token
+    ){
+        User user = userService.getUser(token);
+        List<RankStockResDto> rankStocks = rankService.getRankStocks(user.getId(), Sorting.RISING);
         return ResponseEntity.ok(ApiUtils.success(rankStocks));
     }
 

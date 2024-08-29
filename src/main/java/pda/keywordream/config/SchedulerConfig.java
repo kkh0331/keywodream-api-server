@@ -21,9 +21,10 @@ public class SchedulerConfig {
     private LSSecToken lsSecToken;
     private KoInvSecToken koInvSecToken;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     public void runShinhanSecClient(){
         shinhanSecClient.fetchRankStockVolume();
+        shinhanSecClient.fetchRankStockRising();
         log.info("신한투자증권 Open API - 실시간 인기 종목 업데이트");
     }
 

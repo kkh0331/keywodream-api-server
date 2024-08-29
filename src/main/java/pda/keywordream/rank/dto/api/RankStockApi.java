@@ -7,7 +7,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class RankStockVolumeApi {
+public class RankStockApi {
     private RankStockDataHeader dataHeader;
     private List<RankStock> dataBody;
 }
