@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class RankKeywordStockResDto {
+public class TopKeywordStockResDto {
     private String stockCode;
     private String stockName;
     private Double ratio;

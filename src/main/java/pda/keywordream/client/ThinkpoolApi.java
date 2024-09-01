@@ -1,40 +1,44 @@
-package pda.keywordream.rank.client;
+package pda.keywordream.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import pda.keywordream.rank.dto.api.RankKeywordApi;
-import pda.keywordream.rank.dto.api.RankKeywordStock;
+import pda.keywordream.client.dto.thinkpool.TopKeywordResDto;
+import pda.keywordream.client.dto.thinkpool.TopKeywordStock;
 
 import java.util.List;
 
 @Slf4j
 @Component
-public class ThinkpoolClient {
+public class ThinkpoolApi {
 
-    public RankKeywordApi fetchRankKeywords(){
+    private final WebClient webClient;
+
+    public ThinkpoolApi(){
+        this.webClient = WebClient.builder()
+                .baseUrl("https://api.thinkpool.com/socialAnalysis")
+                .build();
+    }
+
+    public TopKeywordResDto fetchTopKeywords(){
         try{
-            WebClient webClient = WebClient.create();
-            String thinkpoolUrl = "https://api.thinkpool.com/socialAnalysis/keyword";
             return webClient.get()
-                    .uri(thinkpoolUrl)
+                    .uri("/keyword")
                     .retrieve()
-                    .bodyToMono(RankKeywordApi.class)
+                    .bodyToMono(TopKeywordResDto.class)
                     .block();
         } catch(Exception e){
             throw new RuntimeException("thinkpool에서 키워드 리스트 가져오기 실패");
         }
     }
 
-    public List<RankKeywordStock> fetchRankKeywordStocks(Long issn) {
+    public List<TopKeywordStock> fetchTopKeywordStocks(Long issn) {
         try{
-            WebClient webClient = WebClient.create();
-            String thinkpoolUrl = "https://api.thinkpool.com/socialAnalysis/keywordCodeList?&issn="+issn;
             return webClient.get()
-                    .uri(thinkpoolUrl)
+                    .uri("/keywordCodeList?&issn="+issn)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<RankKeywordStock>>() {
+                    .bodyToMono(new ParameterizedTypeReference<List<TopKeywordStock>>() {
                     })
                     .block();
         } catch(Exception e){

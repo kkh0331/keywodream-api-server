@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pda.keywordream.client.GoogleApi;
+import pda.keywordream.client.ThinkpoolApi;
 import pda.keywordream.client.dto.google.TrendingSearchResDto;
+import pda.keywordream.client.dto.thinkpool.TopKeywordResDto;
+import pda.keywordream.client.dto.thinkpool.TopKeywordStock;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
 import pda.keywordream.rank.client.ShinhanSecClient;
-import pda.keywordream.rank.client.ThinkpoolClient;
 import pda.keywordream.rank.dto.RankKeywordResDto;
-import pda.keywordream.rank.dto.RankKeywordStockResDto;
+import pda.keywordream.rank.dto.TopKeywordStockResDto;
 import pda.keywordream.rank.dto.RankStockResDto;
-import pda.keywordream.rank.dto.api.RankKeywordApi;
-import pda.keywordream.rank.dto.api.RankKeywordStock;
 import pda.keywordream.rank.dto.api.RankStock;
 import pda.keywordream.rank.type.Sorting;
 import pda.keywordream.stock.client.KoInvSecClient;
@@ -28,7 +28,7 @@ import java.util.List;
 public class RankService {
 
     private final GoogleApi googleApi;
-    private final ThinkpoolClient thinkpoolClient;
+    private final ThinkpoolApi thinkpoolApi;
     private final ShinhanSecClient shinhanSecClient;
 
     private final HeartStockRepository heartStockRepository;
@@ -44,18 +44,18 @@ public class RankService {
     }
 
     // thinkpool라는 사이트에서 키워드 가져옴
-    public List<RankKeywordResDto> getRankKeywords() {
-        RankKeywordApi rankKeywordApi = thinkpoolClient.fetchRankKeywords();
-        return rankKeywordApi.getList().stream().map(rankKeyword -> RankKeywordResDto.builder()
+    public List<RankKeywordResDto> getTopKeywords() {
+        TopKeywordResDto topKeywordResDto = thinkpoolApi.fetchTopKeywords();
+        return topKeywordResDto.getList().stream().map(rankKeyword -> RankKeywordResDto.builder()
                 .issn(rankKeyword.getIssn())
                 .keyword(rankKeyword.getKeyword())
                 .build()).toList();
     }
 
     // thinkpool에서 발급받은 issn으로 관련 주식들 가져옴
-    public List<RankKeywordStockResDto> getRankKeywordStocks(Long issn) {
-        List<RankKeywordStock> rankKeywordStocks = thinkpoolClient.fetchRankKeywordStocks(issn);
-        return rankKeywordStocks.stream().map(RankKeywordStock::toRankKeywordStockResDto).toList();
+    public List<TopKeywordStockResDto> getTopKeywordStocks(Long issn) {
+        List<TopKeywordStock> rankKeywordStocks = thinkpoolApi.fetchTopKeywordStocks(issn);
+        return rankKeywordStocks.stream().map(TopKeywordStock::toTopKeywordStockResDto).toList();
     }
 
     public List<RankStockResDto> getRankStocks(Long userId, Sorting sorting) {

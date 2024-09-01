@@ -31,16 +31,16 @@ public class RankController {
 
     @GetMapping("/keywords")
     public ResponseEntity<ApiResult<List<RankKeywordResDto>>> getRankKeywords(){
-        List<RankKeywordResDto> rankKeywordResDtos = rankService.getRankKeywords();
+        List<RankKeywordResDto> rankKeywordResDtos = rankService.getTopKeywords();
         return ResponseEntity.ok(ApiUtils.success(rankKeywordResDtos));
     }
 
     @GetMapping("/keywords/{issn}/stocks")
-    public ResponseEntity<ApiResult<List<RankKeywordStockResDto>>> getRankKeywordStocks(
+    public ResponseEntity<ApiResult<List<TopKeywordStockResDto>>> getRankKeywordStocks(
             @PathVariable Long issn
     ){
-        List<RankKeywordStockResDto> rankKeywordStockResDtos = rankService.getRankKeywordStocks(issn);
-        return ResponseEntity.ok(ApiUtils.success(rankKeywordStockResDtos));
+        List<TopKeywordStockResDto> topKeywordStockResDtos = rankService.getTopKeywordStocks(issn);
+        return ResponseEntity.ok(ApiUtils.success(topKeywordStockResDtos));
     }
 
     @GetMapping("/stocks/volume")
