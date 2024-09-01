@@ -1,4 +1,4 @@
-package pda.keywordream.stock.dto.api;
+package pda.keywordream.client.dto.koinvsec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -1,10 +1,10 @@
-package pda.keywordream.stock.dto.api;
+package pda.keywordream.client.dto.koinvsec;
 
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class StockDailyPriceApi {
+public class StockDailyPriceRes {
     List<StockDailyPrice> output2;
 }

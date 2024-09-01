@@ -1,18 +1,17 @@
 package pda.keywordream.stock.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pda.keywordream.client.KoInvSecApi;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
-import pda.keywordream.stock.client.KoInvSecClient;
 import pda.keywordream.stock.dto.*;
-import pda.keywordream.stock.dto.api.StockDailyPrice;
-import pda.keywordream.stock.dto.api.StockDailyPriceApi;
-import pda.keywordream.stock.dto.api.StockPriceApi;
+import pda.keywordream.client.dto.koinvsec.StockDailyPrice;
+import pda.keywordream.client.dto.koinvsec.StockDailyPriceRes;
+import pda.keywordream.client.dto.koinvsec.StockPriceRes;
 import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
 
@@ -28,7 +27,7 @@ public class StockService {
     private final StockRepository stockRepository;
     private final HeartStockRepository heartStockRepository;
 
-    private final KoInvSecClient koInvSecClient;
+    private final KoInvSecApi koInvSecApi;
 
     public GetStocksResDto getStocks(GetStocksReqDto reqDto, Long userId) {
         Page<Stock> page = getStocksByCondition(reqDto);
@@ -71,19 +70,19 @@ public class StockService {
     public GetStockResDto getStock(String stockCode) {
         Stock stock = stockRepository.findByCode(stockCode)
                 .orElseThrow(() -> new NoSuchElementException("해당 주식이 존재하지 않습니다."));
-        StockPriceApi stockPriceApi = koInvSecClient.fetchStockPrice(stockCode);
+        StockPriceRes stockPriceRes = koInvSecApi.fetchStockPrice(stockCode);
         return GetStockResDto.builder()
                 .code(stockCode)
                 .name(stock.getName())
-                .price(stockPriceApi.getOutput().getPrice())
-                .ratio(stockPriceApi.getOutput().getRatio())
+                .price(stockPriceRes.getOutput().getPrice())
+                .ratio(stockPriceRes.getOutput().getRatio())
                 .build();
     }
 
     public List<StockDailyPriceResDto> getStockDailyPrices(String stockCode, Date startDate, Date endDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        StockDailyPriceApi stockDailyPriceApi = koInvSecClient.fetchStockDailyPrice(stockCode, sdf.format(startDate), sdf.format(endDate));
-        return stockDailyPriceApi.getOutput2().stream()
+        StockDailyPriceRes stockDailyPriceRes = koInvSecApi.fetchStockDailyPrice(stockCode, sdf.format(startDate), sdf.format(endDate));
+        return stockDailyPriceRes.getOutput2().stream()
                 .map(StockDailyPrice::toStockDailyPriceResDto)
                 .toList();
     }
