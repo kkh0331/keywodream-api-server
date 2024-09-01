@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import pda.keywordream.client.LSSecApi;
 import pda.keywordream.client.ShinhanSecApi;
-import pda.keywordream.stock.client.LSSecClient;
 import pda.keywordream.utils.token.KoInvSecToken;
 import pda.keywordream.utils.token.LSSecToken;
 
@@ -17,7 +17,7 @@ import pda.keywordream.utils.token.LSSecToken;
 public class SchedulerConfig {
 
     private ShinhanSecApi shinhanSecApi;
-    private LSSecClient lsSecClient;
+    private LSSecApi lsSecApi;
     private LSSecToken lsSecToken;
     private KoInvSecToken koInvSecToken;
 
@@ -43,8 +43,8 @@ public class SchedulerConfig {
 
     // 주식 종목은 매일 상장되고 폐지된다 -> 오전 6시마다 다시 받아온다.
     @Scheduled(cron = "0 0 6 * * ?")
-    public void runLSSecClient(){
-        lsSecClient.fetchStocks();
+    public void runLSSecApi(){
+        lsSecApi.fetchStocks();
         log.info("LS투자증권 Open API - 주식 종목 가져오기");
     }
 
