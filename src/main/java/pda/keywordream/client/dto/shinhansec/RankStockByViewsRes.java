@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RankStockByViewsApi {
+public class RankStockByViewsRes {
     private RankStockByViewsDataBody dataBody;
 }

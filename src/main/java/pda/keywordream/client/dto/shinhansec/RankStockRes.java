@@ -7,6 +7,6 @@ import java.util.List;
 
 @Setter
 @Getter
-public class RankStockApi {
+public class RankStockRes {
     private List<RankStock> dataBody;
 }

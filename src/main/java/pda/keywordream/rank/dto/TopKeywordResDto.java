@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class RankKeywordResDto {
+public class TopKeywordResDto {
 
     private Long issn;
     private String keyword;

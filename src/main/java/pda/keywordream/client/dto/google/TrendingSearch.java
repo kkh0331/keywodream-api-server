@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class TrendingSearchResDto {
+public class TrendingSearch {
 
     private String title;
     private Integer viewCount;

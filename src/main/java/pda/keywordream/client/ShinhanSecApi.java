@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import pda.keywordream.client.dto.shinhansec.RankStock;
-import pda.keywordream.client.dto.shinhansec.RankStockApi;
-import pda.keywordream.client.dto.shinhansec.RankStockByViewsApi;
+import pda.keywordream.client.dto.shinhansec.RankStockRes;
+import pda.keywordream.client.dto.shinhansec.RankStockByViewsRes;
 
 import java.util.List;
 
@@ -36,10 +36,10 @@ public class ShinhanSecApi {
     // 신한투자증권 Open API로 거래량 순으로 상위 5개 가져온다.
     public void fetchRankStockVolume(){
         try{
-            RankStockApi rankStockVolume = webClient.get()
+            RankStockRes rankStockVolume = webClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/issue").queryParam("query_type", 1).build())
                     .retrieve()
-                    .bodyToMono(RankStockApi.class)
+                    .bodyToMono(RankStockRes.class)
                     .block();
             rankStocksByVolume = rankStockVolume.getDataBody();
         } catch(Exception e){
@@ -51,10 +51,10 @@ public class ShinhanSecApi {
     // 신한투자증권 Open API로 주가상승률 순으로 상위 5개 가져온다.
     public void fetchRankStockRising(){
         try{
-            RankStockApi rankStockRising = webClient.get()
+            RankStockRes rankStockRising = webClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/issue").queryParam("query_type", 2).build())
                     .retrieve()
-                    .bodyToMono(RankStockApi.class)
+                    .bodyToMono(RankStockRes.class)
                     .block();
             rankStocksByRising = rankStockRising.getDataBody();
         } catch(Exception e){
@@ -66,10 +66,10 @@ public class ShinhanSecApi {
     // 신한투자증권 Open API로 조회수 순으로 상위 5개 가져온다.
     public void fetchRankStockViews(){
         try{
-            RankStockByViewsApi rankStockRising = webClient.get()
+            RankStockByViewsRes rankStockRising = webClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/rising").build())
                     .retrieve()
-                    .bodyToMono(RankStockByViewsApi.class)
+                    .bodyToMono(RankStockByViewsRes.class)
                     .block();
             rankStocksByViews = rankStockRising.getDataBody().getList();
         } catch(Exception e){

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pda.keywordream.client.dto.google.TrendingSearchResDto;
+import pda.keywordream.client.dto.google.TrendingSearch;
 import pda.keywordream.rank.dto.*;
 import pda.keywordream.rank.service.RankService;
 import pda.keywordream.rank.type.Sorting;
@@ -24,19 +24,19 @@ public class RankController {
     private final UserService userService;
 
     @GetMapping("/searches")
-    public ResponseEntity<ApiResult<List<TrendingSearchResDto>>> getTrendingSearches(@Valid @ModelAttribute TrendingSearchReqDto reqDto){
-        List<TrendingSearchResDto> trendingSearchResDtos = rankService.getTrendingSerches(reqDto.getLimit());
-        return ResponseEntity.ok(ApiUtils.success(trendingSearchResDtos));
+    public ResponseEntity<ApiResult<List<TrendingSearch>>> getTrendingSearches(@Valid @ModelAttribute TrendingSearchReqDto reqDto){
+        List<TrendingSearch> trendingSearches = rankService.getTrendingSerches(reqDto.getLimit());
+        return ResponseEntity.ok(ApiUtils.success(trendingSearches));
     }
 
     @GetMapping("/keywords")
-    public ResponseEntity<ApiResult<List<RankKeywordResDto>>> getRankKeywords(){
-        List<RankKeywordResDto> rankKeywordResDtos = rankService.getTopKeywords();
-        return ResponseEntity.ok(ApiUtils.success(rankKeywordResDtos));
+    public ResponseEntity<ApiResult<List<TopKeywordResDto>>> getTopKeywords(){
+        List<TopKeywordResDto> topKeywordResDtos = rankService.getTopKeywords();
+        return ResponseEntity.ok(ApiUtils.success(topKeywordResDtos));
     }
 
     @GetMapping("/keywords/{issn}/stocks")
-    public ResponseEntity<ApiResult<List<TopKeywordStockResDto>>> getRankKeywordStocks(
+    public ResponseEntity<ApiResult<List<TopKeywordStockResDto>>> getTopKeywordStocks(
             @PathVariable Long issn
     ){
         List<TopKeywordStockResDto> topKeywordStockResDtos = rankService.getTopKeywordStocks(issn);

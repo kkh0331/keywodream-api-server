@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import pda.keywordream.client.dto.thinkpool.TopKeywordResDto;
+import pda.keywordream.client.dto.thinkpool.TopKeywordRes;
 import pda.keywordream.client.dto.thinkpool.TopKeywordStock;
 
 import java.util.List;
@@ -21,12 +21,12 @@ public class ThinkpoolApi {
                 .build();
     }
 
-    public TopKeywordResDto fetchTopKeywords(){
+    public TopKeywordRes fetchTopKeywords(){
         try{
             return webClient.get()
                     .uri("/keyword")
                     .retrieve()
-                    .bodyToMono(TopKeywordResDto.class)
+                    .bodyToMono(TopKeywordRes.class)
                     .block();
         } catch(Exception e){
             throw new RuntimeException("thinkpool에서 키워드 리스트 가져오기 실패");

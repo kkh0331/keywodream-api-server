@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import pda.keywordream.client.GoogleApi;
 import pda.keywordream.client.ShinhanSecApi;
 import pda.keywordream.client.ThinkpoolApi;
-import pda.keywordream.client.dto.google.TrendingSearchResDto;
-import pda.keywordream.client.dto.thinkpool.TopKeywordResDto;
+import pda.keywordream.client.dto.google.TrendingSearch;
+import pda.keywordream.client.dto.thinkpool.TopKeywordRes;
 import pda.keywordream.client.dto.thinkpool.TopKeywordStock;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
-import pda.keywordream.rank.dto.RankKeywordResDto;
+import pda.keywordream.rank.dto.TopKeywordResDto;
 import pda.keywordream.rank.dto.TopKeywordStockResDto;
 import pda.keywordream.rank.dto.RankStockResDto;
 import pda.keywordream.client.dto.shinhansec.RankStock;
@@ -35,21 +35,22 @@ public class RankService {
     private final KoInvSecClient koInvSecClient;
 
     // Google Trend 실시간 검색어에 관한 정보를 가져옴
-    public List<TrendingSearchResDto> getTrendingSerches(Integer limit) {
-        List<TrendingSearchResDto> trendingSearchResDtos = googleApi.fetchTrendingSearches();
-        trendingSearchResDtos.sort((o1, o2) -> Integer.compare(o2.getViewCount(), o1.getViewCount()));
+    public List<TrendingSearch> getTrendingSerches(Integer limit) {
+        List<TrendingSearch> trendingSearches = googleApi.fetchTrendingSearches();
+        trendingSearches.sort((o1, o2) -> Integer.compare(o2.getViewCount(), o1.getViewCount()));
         if(limit == null)
-            return trendingSearchResDtos;
-        return trendingSearchResDtos.stream().limit(limit).toList();
+            return trendingSearches;
+        return trendingSearches.stream().limit(limit).toList();
     }
 
     // thinkpool라는 사이트에서 키워드 가져옴
-    public List<RankKeywordResDto> getTopKeywords() {
-        TopKeywordResDto topKeywordResDto = thinkpoolApi.fetchTopKeywords();
-        return topKeywordResDto.getList().stream().map(rankKeyword -> RankKeywordResDto.builder()
+    public List<TopKeywordResDto> getTopKeywords() {
+        TopKeywordRes topKeywordRes = thinkpoolApi.fetchTopKeywords();
+        return topKeywordRes.getList().stream().map(rankKeyword -> TopKeywordResDto.builder()
                 .issn(rankKeyword.getIssn())
                 .keyword(rankKeyword.getKeyword())
-                .build()).toList();
+                .build())
+                .toList();
     }
 
     // thinkpool에서 발급받은 issn으로 관련 주식들 가져옴
