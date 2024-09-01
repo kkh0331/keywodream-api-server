@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pda.keywordream.client.dto.google.TrendingSearchResDto;
 import pda.keywordream.rank.dto.*;
 import pda.keywordream.rank.service.RankService;
 import pda.keywordream.rank.type.Sorting;
@@ -23,9 +24,9 @@ public class RankController {
     private final UserService userService;
 
     @GetMapping("/searches")
-    public ResponseEntity<ApiResult<List<RankSearchResDto>>> getRankSearches(@Valid @ModelAttribute RankSearchReqDto reqDto){
-        List<RankSearchResDto> rankSearchResDtos = rankService.getRankSearches(reqDto.getLimit());
-        return ResponseEntity.ok(ApiUtils.success(rankSearchResDtos));
+    public ResponseEntity<ApiResult<List<TrendingSearchResDto>>> getTrendingSearches(@Valid @ModelAttribute TrendingSearchReqDto reqDto){
+        List<TrendingSearchResDto> trendingSearchResDtos = rankService.getTrendingSerches(reqDto.getLimit());
+        return ResponseEntity.ok(ApiUtils.success(trendingSearchResDtos));
     }
 
     @GetMapping("/keywords")
