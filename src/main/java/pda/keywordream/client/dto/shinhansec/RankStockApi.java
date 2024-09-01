@@ -1,4 +1,4 @@
-package pda.keywordream.rank.dto.api;
+package pda.keywordream.client.dto.shinhansec;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,5 @@ import java.util.List;
 @Setter
 @Getter
 public class RankStockApi {
-    private RankStockDataHeader dataHeader;
     private List<RankStock> dataBody;
 }

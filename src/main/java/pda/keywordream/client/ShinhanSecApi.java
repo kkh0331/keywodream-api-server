@@ -1,23 +1,23 @@
-package pda.keywordream.rank.client;
+package pda.keywordream.client;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import pda.keywordream.rank.dto.api.RankStock;
-import pda.keywordream.rank.dto.api.RankStockApi;
-import pda.keywordream.rank.dto.api.RankStockByViewsApi;
+import pda.keywordream.client.dto.shinhansec.RankStock;
+import pda.keywordream.client.dto.shinhansec.RankStockApi;
+import pda.keywordream.client.dto.shinhansec.RankStockByViewsApi;
 
 import java.util.List;
 
 @Slf4j
 @Component
-public class ShinhanSecClient {
+public class ShinhanSecApi {
 
     private final WebClient webClient;
 
-    public ShinhanSecClient(@Value("${shinhan.sec.api-key}") String apiKey){
+    public ShinhanSecApi(@Value("${shinhan.sec.api-key}") String apiKey){
         this.webClient = WebClient.builder()
                 .baseUrl("https://gapi.shinhaninvest.com:8443/openapi/v1.0/ranking")
                 .defaultHeader("apiKey", apiKey)
@@ -77,4 +77,7 @@ public class ShinhanSecClient {
             throw new RuntimeException("신한투자증권에서 조회수 순으로 종목 가져오기 실패");
         }
     }
+
+
+
 }

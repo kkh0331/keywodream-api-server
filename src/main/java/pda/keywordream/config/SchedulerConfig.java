@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pda.keywordream.rank.client.ShinhanSecClient;
+import pda.keywordream.client.ShinhanSecApi;
 import pda.keywordream.stock.client.LSSecClient;
 import pda.keywordream.utils.token.KoInvSecToken;
 import pda.keywordream.utils.token.LSSecToken;
@@ -16,16 +16,16 @@ import pda.keywordream.utils.token.LSSecToken;
 @AllArgsConstructor
 public class SchedulerConfig {
 
-    private ShinhanSecClient shinhanSecClient;
+    private ShinhanSecApi shinhanSecApi;
     private LSSecClient lsSecClient;
     private LSSecToken lsSecToken;
     private KoInvSecToken koInvSecToken;
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     public void runShinhanSecClient(){
-        shinhanSecClient.fetchRankStockVolume();
-        shinhanSecClient.fetchRankStockRising();
-        shinhanSecClient.fetchRankStockViews();
+        shinhanSecApi.fetchRankStockVolume();
+        shinhanSecApi.fetchRankStockRising();
+        shinhanSecApi.fetchRankStockViews();
         log.info("신한투자증권 Open API - 실시간 인기 종목 업데이트");
     }
 

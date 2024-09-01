@@ -1,4 +1,4 @@
-package pda.keywordream.rank.dto.api;
+package pda.keywordream.client.dto.shinhansec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

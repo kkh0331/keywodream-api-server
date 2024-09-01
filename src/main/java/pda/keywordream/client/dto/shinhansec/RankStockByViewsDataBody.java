@@ -1,4 +1,4 @@
-package pda.keywordream.rank.dto.api;
+package pda.keywordream.client.dto.shinhansec;
 
 import lombok.Getter;
 

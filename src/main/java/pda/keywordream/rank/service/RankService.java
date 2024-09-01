@@ -4,17 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pda.keywordream.client.GoogleApi;
+import pda.keywordream.client.ShinhanSecApi;
 import pda.keywordream.client.ThinkpoolApi;
 import pda.keywordream.client.dto.google.TrendingSearchResDto;
 import pda.keywordream.client.dto.thinkpool.TopKeywordResDto;
 import pda.keywordream.client.dto.thinkpool.TopKeywordStock;
 import pda.keywordream.heart.entity.HeartStock;
 import pda.keywordream.heart.repository.HeartStockRepository;
-import pda.keywordream.rank.client.ShinhanSecClient;
 import pda.keywordream.rank.dto.RankKeywordResDto;
 import pda.keywordream.rank.dto.TopKeywordStockResDto;
 import pda.keywordream.rank.dto.RankStockResDto;
-import pda.keywordream.rank.dto.api.RankStock;
+import pda.keywordream.client.dto.shinhansec.RankStock;
 import pda.keywordream.rank.type.Sorting;
 import pda.keywordream.stock.client.KoInvSecClient;
 import pda.keywordream.stock.dto.api.StockPrice;
@@ -29,7 +29,7 @@ public class RankService {
 
     private final GoogleApi googleApi;
     private final ThinkpoolApi thinkpoolApi;
-    private final ShinhanSecClient shinhanSecClient;
+    private final ShinhanSecApi shinhanSecApi;
 
     private final HeartStockRepository heartStockRepository;
     private final KoInvSecClient koInvSecClient;
@@ -77,9 +77,9 @@ public class RankService {
 
     public List<RankStock> getRankStocksBySorting(Sorting sorting){
         return switch (sorting){
-            case VOLUME -> shinhanSecClient.getRankStocksByVolume();
-            case VIEWS -> shinhanSecClient.getRankStocksByViews();
-            case RISING -> shinhanSecClient.getRankStocksByRising();
+            case VOLUME -> shinhanSecApi.getRankStocksByVolume();
+            case VIEWS -> shinhanSecApi.getRankStocksByViews();
+            case RISING -> shinhanSecApi.getRankStocksByRising();
         };
     }
 }
