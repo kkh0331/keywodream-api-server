@@ -8,10 +8,12 @@ import pda.keywordream.client.dto.koinvsec.*;
 import pda.keywordream.statement.dto.PerPbrDto;
 import pda.keywordream.statement.dto.StatementResDto;
 import pda.keywordream.statement.entity.Statement;
+import pda.keywordream.statement.repository.StatementRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -20,9 +22,19 @@ public class StatementService {
 
     private final KoInvSecApi koInvSecApi;
 
+    private final StatementRepository statementRepository;
+
     public StatementResDto getStatement(String stockCode) {
         String yymm = getYearMonth(1);
         String year = yymm.substring(0,4);
+        Optional<Statement> statement = statementRepository.findByStockCodeAndYear(stockCode, year);
+        if(statement.isPresent()){
+            return statement.get().toStatementResDto();
+        }
+        return registerStatement(stockCode,yymm, year).toStatementResDto();
+    }
+
+    private Statement registerStatement(String stockCode, String yymm, String year){
         StockIncomeState stockIncomeStateByYYMM = fetchStockIncomeState(stockCode, yymm);
         StockFinancialRatio stockFinancialRatioByYYMM = fetchStockFinancialRatio(stockCode, yymm);
         StockOtherMajorRatio stockOtherMajorRatioByYYMM = fetchStockOtherMajorRatio(stockCode, yymm);
@@ -44,8 +56,7 @@ public class StatementService {
                 .pbr(perPbrDto.getPbr())
                 .stockCode(stockCode)
                 .build();
-
-        return statement.toStatementResDto();
+        return statementRepository.save(statement);
     }
 
     private StockIncomeState fetchStockIncomeState(String stockCode, String yymm){
