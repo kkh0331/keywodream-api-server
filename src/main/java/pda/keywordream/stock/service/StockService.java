@@ -86,4 +86,10 @@ public class StockService {
                 .map(StockDailyPrice::toStockDailyPriceResDto)
                 .toList();
     }
+
+    public void checkStock(String stockCode){
+        stockRepository.findByCode(stockCode)
+                .orElseThrow(() -> new NoSuchElementException("해당 주식이 존재하지 않습니다."));
+    }
+
 }

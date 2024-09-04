@@ -23,8 +23,6 @@ public class HeartStockService {
     private final StockRepository stockRepository;
 
     public void registerHeartStock(Long userId, String stockCode) {
-        stockRepository.findByCode(stockCode)
-                .orElseThrow(() -> new NoSuchElementException("해당 주식이 존재하지 않습니다."));
         HeartStock heartStock = HeartStock.builder()
                 .userId(userId)
                 .stockCode(stockCode)

@@ -12,7 +12,6 @@ import lombok.*;
 @Table(name = "hearted_stocks", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"userId", "stockCode"})
 })
-
 public class HeartStock {
 
     @Id
