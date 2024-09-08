@@ -1,9 +1,8 @@
 package pda.keywordream.client;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import pda.keywordream.client.dto.lssec.*;
 import pda.keywordream.stock.entity.Stock;
@@ -15,27 +14,37 @@ import java.util.List;
 
 @Slf4j
 @Component
-@AllArgsConstructor
 public class LSSecApi {
 
-    private final LSSecToken lsSecToken;
-    private final StockRepository stockRepository;
+    private final WebClient webClient;
+
+    @Autowired
+    private LSSecToken lsSecToken;
+
+    @Autowired
+    private StockRepository stockRepository;
+
+    public LSSecApi(){
+        this.webClient = WebClient.builder()
+                .baseUrl("https://openapi.ebestsec.co.kr:8080/stock")
+                .defaultHeaders(headers -> {
+                    headers.add("content-type", "application/json; charset=utf-8");
+                    headers.add("tr_cont", "N");
+                    headers.add("tr_cont_key", "");
+                    headers.add("mac_address", "");
+                })
+                .build();
+    }
 
     public T8412Res fetchStockChartPrices(String stockCode, String chartDate, Integer minInterval){
         try{
-            WebClient webClient = WebClient.builder()
-                    .baseUrl("https://openapi.ebestsec.co.kr:8080/stock/chart")
-                    .defaultHeaders(headers -> {
-                        headers.add("content-type", "application/json; charset=utf-8");
-                        headers.add("authorization", "Bearer " + lsSecToken.getToken());
-                        headers.add("tr_cd", "t8412");
-                        headers.add("tr_cont", "N");
-                        headers.add("tr_cont_key", "");
-                        headers.add("mac_address", "");
-                    })
-                    .build();
             T8412ReqBlock t8412ReqBlock = new T8412ReqBlock(stockCode, chartDate, minInterval);
             return webClient.post()
+                    .uri(uriBuilder -> uriBuilder.path("/chart").build())
+                    .headers(headers -> {
+                        headers.add("authorization", "Bearer " + lsSecToken.getToken());
+                        headers.add("tr_cd", "t8412");
+                    })
                     .bodyValue(new T8412Req(t8412ReqBlock))
                     .retrieve()
                     .bodyToMono(T8412Res.class)
@@ -48,21 +57,12 @@ public class LSSecApi {
 
     public void fetchStocks(){
         try{
-            WebClient webClient = WebClient.builder()
-                    .baseUrl("https://openapi.ebestsec.co.kr:8080/stock/etc")
-                    .defaultHeaders(headers -> {
-                        headers.add("content-type", "application/json; charset=utf-8");
+            T8430Res fetchStockRes = webClient.post()
+                    .uri(uriBuilder -> uriBuilder.path("/etc").build())
+                    .headers(headers -> {
                         headers.add("authorization", "Bearer " + lsSecToken.getToken());
                         headers.add("tr_cd", "t8430");
-                        headers.add("tr_cont", "N");
-                        headers.add("tr_cont_key", "");
-                        headers.add("mac_address", "");
                     })
-                    .exchangeStrategies(ExchangeStrategies.builder()
-                            .codecs(config -> config.defaultCodecs().maxInMemorySize(1024*1024))
-                            .build())
-                    .build();
-            T8430Res fetchStockRes = webClient.post()
                     .bodyValue(new T8430Req(new T8430ReqBlock("0")))
                     .retrieve()
                     .bodyToMono(T8430Res.class)
