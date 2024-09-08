@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
-import pda.keywordream.stock.dto.StockResDto;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Builder
@@ -25,5 +25,8 @@ public class Stock {
 
     @Column(length = 1)
     private String market;
+
+    @ColumnDefault("0")
+    private Integer recentNewsCount;
 
 }
