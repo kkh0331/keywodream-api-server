@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import pda.keywordream.client.dto.lssec.T8430Req;
-import pda.keywordream.client.dto.lssec.T8430ReqBlock;
-import pda.keywordream.client.dto.lssec.T8430Res;
-import pda.keywordream.client.dto.lssec.T8430ResBlock;
+import pda.keywordream.client.dto.lssec.*;
 import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
 import pda.keywordream.utils.token.LSSecToken;
@@ -23,6 +20,31 @@ public class LSSecApi {
 
     private final LSSecToken lsSecToken;
     private final StockRepository stockRepository;
+
+    public T8412Res fetchStockChartPrices(String stockCode, String chartDate, Integer minInterval){
+        try{
+            WebClient webClient = WebClient.builder()
+                    .baseUrl("https://openapi.ebestsec.co.kr:8080/stock/chart")
+                    .defaultHeaders(headers -> {
+                        headers.add("content-type", "application/json; charset=utf-8");
+                        headers.add("authorization", "Bearer " + lsSecToken.getToken());
+                        headers.add("tr_cd", "t8412");
+                        headers.add("tr_cont", "N");
+                        headers.add("tr_cont_key", "");
+                        headers.add("mac_address", "");
+                    })
+                    .build();
+            T8412ReqBlock t8412ReqBlock = new T8412ReqBlock(stockCode, chartDate, minInterval);
+            return webClient.post()
+                    .bodyValue(new T8412Req(t8412ReqBlock))
+                    .retrieve()
+                    .bodyToMono(T8412Res.class)
+                    .block();
+        } catch(Exception e){
+            log.error("FetchStockChartPrices Error = {}", e.getMessage());
+            throw new RuntimeException("LS 증권에서 N분 간격 주식 가져오기 실패");
+        }
+    }
 
     public void fetchStocks(){
         try{
