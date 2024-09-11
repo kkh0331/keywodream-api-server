@@ -2,15 +2,15 @@ package pda.keywordream.news;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pda.keywordream.news.dto.NewsDetailResDto;
+import pda.keywordream.news.dto.NewsResDto;
 import pda.keywordream.news.service.NewsService;
 import pda.keywordream.stock.service.StockService;
 import pda.keywordream.utils.ApiUtils;
 import pda.keywordream.utils.ApiUtils.ApiResult;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +28,21 @@ public class NewsController {
         stockService.checkStock(stockCode);
         NewsDetailResDto newsDetailResDto = newsService.getNews(newsId);
         return ResponseEntity.ok(ApiUtils.success(newsDetailResDto));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResult<List<NewsResDto>>> getNewsList(
+            @PathVariable String stockCode,
+            @RequestParam(required = false) String keyword
+    ){
+        stockService.checkStock(stockCode);
+        List<NewsResDto> newsResDtos;
+        if(keyword == null){
+            newsResDtos = newsService.getNewsList(stockCode);
+        } else {
+            newsResDtos = newsService.getNewsList(stockCode, keyword);
+        }
+        return ResponseEntity.ok(ApiUtils.success(newsResDtos));
     }
 
 }

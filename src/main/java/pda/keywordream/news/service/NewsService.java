@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pda.keywordream.news.dto.NewsKeywordResDto;
 import pda.keywordream.news.dto.NewsDetailResDto;
+import pda.keywordream.news.dto.NewsResDto;
 import pda.keywordream.news.entity.News;
 import pda.keywordream.news.entity.NewsKeyword;
 import pda.keywordream.news.entity.NewsStock;
@@ -16,6 +17,7 @@ import pda.keywordream.stock.repository.StockRepository;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -45,12 +47,8 @@ public class NewsService {
     }
 
     public List<NewsKeywordResDto> getNewsKeywords(String stockCode, Integer count){
-        Integer recentNewsCount = getStockRecentNewsCount(stockCode);
-        List<NewsStock> newsStocks = newsStockRepository.findAllByStockCodeOrderByIdDesc(stockCode).stream()
-                .limit(recentNewsCount)
-                .toList();
-        List<Long> newsIds = newsStocks.stream().map(NewsStock::getNewsId).toList();
-        List<NewsKeyword> newsKeywords = newsKeywordRepository.findAllByNewsIdIn(newsIds);
+        List<Long> newsIdsByStockCode = getNewsIdsByStockCode(stockCode);
+        List<NewsKeyword> newsKeywords = newsKeywordRepository.findAllByNewsIdIn(newsIdsByStockCode);
         Map<String, Integer> keywordCountMap = newsKeywords.stream().collect(Collectors.groupingBy(
                 NewsKeyword::getKeyword,
                 Collectors.summingInt(NewsKeyword::getCount)
@@ -60,6 +58,46 @@ public class NewsService {
                 .sorted((dto1, dto2) -> dto2.getCount().compareTo(dto1.getCount()))
                 .limit(count)
                 .toList();
+    }
+
+    public List<NewsResDto> getNewsList(String stockCode) {
+        List<Long> newsIdsByStockCode = getNewsIdsByStockCode(stockCode);
+        List<News> newsList = newsRepository.findAllByIdInOrderByCreatedAtDesc(newsIdsByStockCode);
+        return newsList.stream()
+                .map(this::toNewsResDto)
+                .toList();
+    }
+
+    public List<NewsResDto> getNewsList(String stockCode, String keyword) {
+        List<Long> newsIdsByStockCode = getNewsIdsByStockCode(stockCode);
+        List<News> newsList = newsRepository.findAllByIdInOrderByCreatedAtDesc(newsIdsByStockCode);
+        return newsList.stream()
+                .filter(news -> isKeywordInNews(news, keyword))
+                .map(this::toNewsResDto)
+                .toList();
+    }
+
+    private NewsResDto toNewsResDto(News news){
+        String newsDate = changeNewsListDateFormat(news.getCreatedAt());
+        return NewsResDto.builder()
+                .id(news.getId())
+                .title(news.getTitle())
+                .press(news.getPress())
+                .newsDate(newsDate)
+                .imgUrl(news.getImgUrl())
+                .build();
+    }
+
+    private Boolean isKeywordInNews(News news, String keyword){
+        return news.getContent().contains(keyword);
+    }
+
+    private List<Long> getNewsIdsByStockCode(String stockCode){
+        Integer recentNewsCount = getStockRecentNewsCount(stockCode);
+        List<NewsStock> newsStocks = newsStockRepository.findAllByStockCodeOrderByIdDesc(stockCode).stream()
+                .limit(recentNewsCount)
+                .toList();
+        return newsStocks.stream().map(NewsStock::getNewsId).toList();
     }
 
     private Integer getStockRecentNewsCount(String stockCode){
@@ -73,4 +111,22 @@ public class NewsService {
         return sdf.format(timestamp);
     }
 
+    private String changeNewsListDateFormat(Timestamp timestamp){
+        Date currentDate = new Date();
+        Date newsDate = new Date(timestamp.getTime());
+        long timeDiff = currentDate.getTime() - newsDate.getTime();
+
+        long seconds = timeDiff/1000;
+        long minutes = seconds/60;
+        long hours = minutes/60;
+        long days = hours/24;
+
+        if(days > 0){
+            return days + "일 전";
+        } else if(hours > 0){
+            return hours + "시간 전";
+        } else {
+            return minutes + "분 전";
+        }
+    }
 }
