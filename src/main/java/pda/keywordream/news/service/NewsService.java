@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pda.keywordream.news.dto.NewsKeywordResDto;
-import pda.keywordream.news.dto.NewsResDto;
+import pda.keywordream.news.dto.NewsDetailResDto;
 import pda.keywordream.news.entity.News;
 import pda.keywordream.news.entity.NewsKeyword;
 import pda.keywordream.news.entity.NewsStock;
@@ -31,11 +31,11 @@ public class NewsService {
     private final NewsKeywordRepository newsKeywordRepository;
     private final StockRepository stockRepository;
 
-    public NewsResDto getNews(Long newsId) {
+    public NewsDetailResDto getNews(Long newsId) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NoSuchElementException("해당 뉴스가 존재하지 않습니다."));
         String newsDate = changeNewsDateFormat(news.getCreatedAt());
-        return NewsResDto.builder()
+        return NewsDetailResDto.builder()
                 .title(news.getTitle())
                 .newsDate(newsDate)
                 .press(news.getPress())

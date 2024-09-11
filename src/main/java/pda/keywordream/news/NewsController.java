@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pda.keywordream.news.dto.NewsResDto;
+import pda.keywordream.news.dto.NewsDetailResDto;
 import pda.keywordream.news.service.NewsService;
 import pda.keywordream.stock.service.StockService;
 import pda.keywordream.utils.ApiUtils;
@@ -21,13 +21,13 @@ public class NewsController {
     private final StockService stockService;
 
     @GetMapping("/{newsId}")
-    public ResponseEntity<ApiResult<NewsResDto>> getNews(
+    public ResponseEntity<ApiResult<NewsDetailResDto>> getNews(
             @PathVariable String stockCode,
             @PathVariable Long newsId
     ){
         stockService.checkStock(stockCode);
-        NewsResDto newsResDto = newsService.getNews(newsId);
-        return ResponseEntity.ok(ApiUtils.success(newsResDto));
+        NewsDetailResDto newsDetailResDto = newsService.getNews(newsId);
+        return ResponseEntity.ok(ApiUtils.success(newsDetailResDto));
     }
 
 }

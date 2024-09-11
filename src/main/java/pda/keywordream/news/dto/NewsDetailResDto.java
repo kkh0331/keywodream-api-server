@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class NewsResDto {
+public class NewsDetailResDto {
 
     private String title;
     private String press;
