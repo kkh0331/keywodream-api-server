@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import pda.keywordream.news.dto.NewsResDto;
 
 import java.sql.Timestamp;
 
