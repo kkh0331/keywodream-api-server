@@ -1,6 +1,7 @@
 package pda.keywordream.news;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pda.keywordream.news.dto.NewsDetailResDto;
@@ -54,6 +55,18 @@ public class NewsController {
         stockService.checkStock(stockCode);
         NewsSentimetAnalysisResDto newsSentimetAnalysisResDto = newsService.getNewsSentimentAnalysisResult(newsId);
         return ResponseEntity.ok(ApiUtils.success(newsSentimetAnalysisResDto));
+    }
+
+    @GetMapping("/crawling")
+    public ResponseEntity<ApiResult<?>> performNewsCrawling(
+            @PathVariable String stockCode
+    ){
+        stockService.checkStock(stockCode);
+        Boolean isSuccessCrawling = newsService.performNewsCrawling(stockCode);
+        if(isSuccessCrawling){
+            return ResponseEntity.ok(ApiUtils.success("크롤링 성공"));
+        }
+        return ResponseEntity.ok(ApiUtils.error("크롤링 실패", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
 

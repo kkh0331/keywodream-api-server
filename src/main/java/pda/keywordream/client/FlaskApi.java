@@ -33,6 +33,21 @@ public class FlaskApi {
         }
     }
 
+    public ApiResult performNewsCrawling(String stockCode){
+        try{
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/stocks/"+stockCode+"/news/crawling")
+                            .build())
+                    .retrieve()
+                    .bodyToMono(ApiResult.class)
+                    .block();
+        } catch(Exception e){
+            log.error("performNewsCrawling Error = {}", e.getMessage());
+            throw new RuntimeException("Flask 크롤링 서버에서 뉴스 크롤링 실패");
+        }
+    }
+
 
 
 }

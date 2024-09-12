@@ -149,4 +149,8 @@ public class NewsService {
         throw new RuntimeException("뉴스 감정 분석이 제대로 이루어지지 않았습니다.");
     }
 
+    public Boolean performNewsCrawling(String stockCode) {
+        ApiResult newsCrawling = flaskApi.performNewsCrawling(stockCode);
+        return newsCrawling.getSuccess();
+    }
 }
