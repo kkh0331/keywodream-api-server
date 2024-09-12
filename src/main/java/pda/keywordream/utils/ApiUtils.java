@@ -2,6 +2,7 @@ package pda.keywordream.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 public class ApiUtils<T> {
@@ -13,16 +14,17 @@ public class ApiUtils<T> {
         return new ApiResult<>(false, null, new ApiError(errorMessage, status));
     }
 
+    @ToString
     @Getter
     @AllArgsConstructor
     public static class ApiResult<T>{
-        boolean success;
+        Boolean success;
         T response;
         ApiError error;
     }
 
     @Getter
-    private static class ApiError<M>{
+    public static class ApiError<M>{
         M errorMessage;
         HttpStatus httpStatus;
 

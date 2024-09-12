@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pda.keywordream.news.dto.NewsDetailResDto;
 import pda.keywordream.news.dto.NewsResDto;
+import pda.keywordream.news.dto.NewsSentimetAnalysisResDto;
 import pda.keywordream.news.service.NewsService;
 import pda.keywordream.stock.service.StockService;
 import pda.keywordream.utils.ApiUtils;
@@ -44,5 +45,16 @@ public class NewsController {
         }
         return ResponseEntity.ok(ApiUtils.success(newsResDtos));
     }
+
+    @GetMapping("/{newsId}/sentiment-analysis")
+    public ResponseEntity<ApiResult<NewsSentimetAnalysisResDto>> getNewsSentimentAnalysisResult(
+            @PathVariable String stockCode,
+            @PathVariable Long newsId
+    ){
+        stockService.checkStock(stockCode);
+        NewsSentimetAnalysisResDto newsSentimetAnalysisResDto = newsService.getNewsSentimentAnalysisResult(newsId);
+        return ResponseEntity.ok(ApiUtils.success(newsSentimetAnalysisResDto));
+    }
+
 
 }

@@ -3,9 +3,12 @@ package pda.keywordream.news.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pda.keywordream.client.FlaskApi;
+import pda.keywordream.client.dto.flask.NewsSentimentAnalysisRes;
 import pda.keywordream.news.dto.NewsKeywordResDto;
 import pda.keywordream.news.dto.NewsDetailResDto;
 import pda.keywordream.news.dto.NewsResDto;
+import pda.keywordream.news.dto.NewsSentimetAnalysisResDto;
 import pda.keywordream.news.entity.News;
 import pda.keywordream.news.entity.NewsKeyword;
 import pda.keywordream.news.entity.NewsStock;
@@ -14,6 +17,7 @@ import pda.keywordream.news.repository.NewsRepository;
 import pda.keywordream.news.repository.NewsStockRepository;
 import pda.keywordream.stock.entity.Stock;
 import pda.keywordream.stock.repository.StockRepository;
+import pda.keywordream.utils.ApiUtils.ApiResult;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -32,6 +36,8 @@ public class NewsService {
     private final NewsStockRepository newsStockRepository;
     private final NewsKeywordRepository newsKeywordRepository;
     private final StockRepository stockRepository;
+
+    private final FlaskApi flaskApi;
 
     public NewsDetailResDto getNews(Long newsId) {
         News news = newsRepository.findById(newsId)
@@ -129,4 +135,18 @@ public class NewsService {
             return minutes + "분 전";
         }
     }
+
+    public NewsSentimetAnalysisResDto getNewsSentimentAnalysisResult(Long newsId) {
+        News news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new NoSuchElementException("해당 뉴스가 존재하지 않습니다."));
+        if(news.getIsGood() != null){
+            return new NewsSentimetAnalysisResDto(news.getIsGood());
+        }
+        NewsSentimentAnalysisRes analyzedNewsSentiment = flaskApi.analyzeNewsSentiment(newsId);
+        if(analyzedNewsSentiment.getSuccess()){
+            return new NewsSentimetAnalysisResDto(analyzedNewsSentiment.getResponse().getIsGood());
+        }
+        throw new RuntimeException("뉴스 감정 분석이 제대로 이루어지지 않았습니다.");
+    }
+
 }
