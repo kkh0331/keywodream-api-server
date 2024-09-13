@@ -2,12 +2,11 @@
 > Keywordream은 주식이 왜 오르고 내리는지 알고 싶어하는 주린이들에게 각 종목에 대한 `정보`와 `시세 변화에 대한 이해`를 제공한다.
 
 ## 🔗 Link
+> https://github.com/Keywordream-PDA
 ### 리팩토링 전
-> [Client](https://github.com/Keywordream-PDA/Client) - React  
 > [Rest API Server](https://github.com/Keywordream-PDA/Server) - Express.js  
 > [Crawling Server](https://github.com/Keywordream-PDA/Data) - Flask
 ### 리팩토링 후
-> [Client](https://github.com/kkh0331/keywordream-client) - React  
 > [Rest API Server](https://github.com/kkh0331/keywodream-api-server) - Spring Boot  
 > [Crawling Server](https://github.com/kkh0331/keywordream-crawling-server) - Flask
 
@@ -44,13 +43,12 @@
 [Keywordream API 명세서](https://kkh0331.notion.site/Keywordream-API-9c8d284998854dc7b30cb6d4a2b4ab51)
 
 ## 😡 Trouble Issues
+>[Keywordream 프로젝트 후기](https://velog.io/@rlgus9301/Keywordream-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0)
 ### 실시간 시세 조회
->[Keywordream 프로젝트 후기](https://velog.io/@rlgus9301/Keywordream-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0) - 1. 실시간 시세
 - 처음에는 Client와 한국투자증권 Web Socket Server을 직접 연결했으나 `동시 연결 불가능`이라는 제약사항 존재하여 자체 서버를 중간 경유지로 사용하여 해결
 - 중간 경유지로 사용함으로써, 자체 서버에 각 클라이언트가 요청한 모든 주식 데이터가 수집됨 -> 자체 서버에서 각 클라이언트에게 필요한 주가 데이터만 보내기 위해서 socket.io의 room 기능을 활용함
 
 ### 크롤링 최소화
->[Keywordream 프로젝트 후기](https://velog.io/@rlgus9301/Keywordream-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0) - 2. 뉴스 크롤링
 - 원래는 사용자가 요청할 때마다, 크롤링을 진행하려고 했었음
 - But, 중복 크롤링 가능성도 있고 크롤링을 하는 네이버에서 막을 가능성이 존재
 - So, 크롤링을 최소화하기 위해 DB에 저장함으로써 중복 크롤링을 막음
